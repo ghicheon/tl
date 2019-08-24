@@ -18,7 +18,7 @@ f = open("y.txt")
 yall  = f.readline()
 f.close()
 
-y = [[1,0],[0,1]]
+y_onehot = [[1,0],[0,1]]
 
 
 Xtrain = []
@@ -41,12 +41,12 @@ for i,fname in enumerate(range(4000)):
     if b == 0:
         Xtest.append( cv2.resize(img,(row,col) ) )
         is_red =    int( yall[i] == 'R')
-        ytest.append( y[is_red])
+        ytest.append( y_onehot[is_red])
         b = 6
     else:
         Xtrain.append( cv2.resize(img,(row,col) ) )
         is_red =    int( yall[i] == 'R')
-        ytrain.append( y[is_red])
+        ytrain.append( y_onehot[is_red])
         b = b - 1
 
 
@@ -104,7 +104,7 @@ b_fc1 = bias_variable([1024])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
 # Dropout
-keep_prob  = tf.placeholder(tf.float32)
+keep_prob  = tf.placeholder(tf.float32 , name='keep_prob')
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 # Fully connected layer 2 (Output layer)
@@ -112,6 +112,7 @@ W_fc2 = weight_variable([1024, n_classes])
 b_fc2 = bias_variable([n_classes])
 
 y = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2, name='y')
+
 
 # Evaluation functions
 cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=[1]))
@@ -121,6 +122,8 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name='accurac
 
 # Training algorithm
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+
+saver = tf.train.Saver()
 
 nn=0
 # Training steps
@@ -141,14 +144,12 @@ with tf.Session() as sess:
     nn += 1
 
 
-    #saver = tf.train.Saver()
-    #saver.save(sess, 'my_test_model')
+    saver.save(sess,'./saved_model')
 
 
 
-
-  print(max_steps, sess.run(accuracy, feed_dict={x: X_test.reshape((-1,32*32*3)), 
-                                                 y_: y_test, keep_prob: 1.0}))
+  print( max_steps, sess.run(accuracy, feed_dict={x: X_test.reshape((-1,32*32*3)), 
+                                       y_: y_test, keep_prob: 1.0}))
     
 
 
