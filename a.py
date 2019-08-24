@@ -24,8 +24,11 @@ y = [[1,0],[0,1]]
 Xtrain = []
 ytrain = []
 
+Xtest = []
+ytest = []
 
 
+b = 0
 
 for i,fname in enumerate(range(4000)):
     fname = "data/" + str(fname) + ".jpg"
@@ -34,14 +37,21 @@ for i,fname in enumerate(range(4000)):
 
     img.astype('float32')
     img =  img/255.0
-    Xtrain.append( cv2.resize(img,(row,col) ) )
 
-    is_red =    int( yall[i] == 'R')
-    ytrain.append( y[is_red])
+    if b == 0:
+        Xtest.append( cv2.resize(img,(row,col) ) )
+        is_red =    int( yall[i] == 'R')
+        ytest.append( y[is_red])
+        b = 6
+    else:
+        Xtrain.append( cv2.resize(img,(row,col) ) )
+        is_red =    int( yall[i] == 'R')
+        ytrain.append( y[is_red])
+        b = b - 1
 
 
 X_train, y_train = np.array(Xtrain), np.array(ytrain)
-print(y_train)
+X_test, y_test = np.array(Xtest), np.array(ytest)
 
 print(len(X_train), len(y_train))
 print(type(X_train), type(y_train))
@@ -137,8 +147,8 @@ with tf.Session() as sess:
 
 
 
-  print(max_steps, sess.run(accuracy, feed_dict={x: X_train.reshape((-1,32*32*3)), 
-                                                 y_: y_train, keep_prob: 1.0}))
+  print(max_steps, sess.run(accuracy, feed_dict={x: X_test.reshape((-1,32*32*3)), 
+                                                 y_: y_test, keep_prob: 1.0}))
     
 
 
