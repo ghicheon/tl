@@ -144,7 +144,8 @@ with tf.Session() as sess:
     nn += 1
 
 
-    saver.save(sess,'./saved_model')
+    if nn% 9999 == 0:
+        saver.save(sess,'./saved_model')
 
 
 

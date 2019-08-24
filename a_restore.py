@@ -59,7 +59,6 @@ for i,fname in enumerate(range(4000)):
         ytest.append( y_onehot[is_red])
         b = 6
     b = b - 1
-print(ytest)
 
 X_test, y_test = np.array(Xtest), np.array(ytest)
 
@@ -72,5 +71,20 @@ cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=
 correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name='accuracy')
 
-print( sess.run(accuracy, feed_dict={x: X_test.reshape((-1,32*32*3)), 
-                                        y_: y_test, keep_prob: 1.0}))
+#############################################################################
+#out =  sess.run(accuracy, feed_dict={x: X_test.reshape((-1,32*32*3)), 
+#                                        y_: y_test, keep_prob: 1.0})
+#############################################################################
+
+#############################################################################
+#out =  sess.run(y,    feed_dict={x: X_test.reshape((-1,32*32*3)), 
+#                                        y_: y_test, keep_prob: 1.0})
+#print(out)
+#print(out.shape)
+#print(type(out))
+#print("len X_test:", len(X_test))
+#############################################################################
+out =  sess.run(correct_prediction,    feed_dict={x: X_test.reshape((-1,32*32*3)), 
+                                        y_: y_test, keep_prob: 1.0})
+print(out)
+
